@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:52:11 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/21 20:10:44 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/22 16:51:58 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,21 @@
 
 int main(int ac, char **av) {
 
-	if (ac == 2)
+	if (ac > 1)
 	{
 		try
 		{
 			PmergeMe pmerge;
 
+			pmerge.mergeSort(av);
+
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << e.what() << '\n';
+			std::cout << e.what() << '\n';
 		}
 	}
 	else
-		std::cerr << "Error: Bad number of argument !" <<  std::endl;
+		std::cout << "Error: Bad number of argument !" <<  std::endl;
 	return (1);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   PmergeMe.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/22 17:47:23 by luserbu           #+#    #+#             */
+/*   Updated: 2023/04/22 17:47:34 by luserbu          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PMERGEME_HPP
 # define PMERGEME_HPP
 
@@ -7,7 +19,9 @@
 # include <vector>
 # include <cstring>
 # include <cstdlib>
-#include <algorithm>
+# include <algorithm>
+# include <limits.h>
+# include <sys/time.h>
 
 class PmergeMe
 {
@@ -27,13 +41,24 @@ class PmergeMe
                 { return ("\033[1;91mError\033[0m"); }
         };
 
-		void		mergeSort(char **sort);
-		int			lengthDoubleTab(char **tab);
+		void					mergeSort(char **sort);
+		int						lengthDoubleTab(char **tab);
+		void					easyFindError(char **tab);
+		double					start_time(void);
+		double					time_now(void);
+
+		void					printInfo(int *stack, int lengthSort, std::vector<int> vecSort);
+
+		std::vector<int>		sortVector(std::vector<int> vecSort, int *stack, int pointer, int length);
+		std::list<int>			sortList(std::list<int> listSort, int *stack, int pointer, int length);
+
 
 	private:
 
-};
+		double generalTime;
+		double vectorTime;
+		double listTime;
 
-std::ostream &			operator<<( std::ostream & o, PmergeMe const & i );
+};
 
 #endif /* ******************************************************** PMERGEME_H */

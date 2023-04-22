@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 20:12:28 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/21 18:57:06 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/22 17:53:14 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class BitcoinExchange
         {
             public:
                 virtual const char* what() const throw()
-                { return ("EXCEPTION"); }
+                { return ("\033[1;91mError\033[0m"); }
         };
 
 		void		findValue();

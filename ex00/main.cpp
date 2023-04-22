@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:52:11 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/20 21:19:18 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/22 17:52:50 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,6 @@ int main(int ac, char **av) {
 		}
 	}
 	else
-		std::cerr << "Error: Bad number of argument !" <<  std::endl;
+		std::cerr << RED << "Error: Bad number of argument !" << WHITE << std::endl;
 	return (1);
 }
