@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 12:30:36 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/21 18:16:23 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/24 15:53:29 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,9 @@ class RPN
         };
 
 		void		polishNotation(char* notation);
-		void			easyCheck(char *notation);
+		void		easyCheck(char *notation);
 		int			arithmetic(int first, int second, char c);
+		int			oneArgument(std::stack<int> mystack, char *string);
 
 	private:
 

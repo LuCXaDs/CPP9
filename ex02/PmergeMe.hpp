@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 17:47:23 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/22 17:47:34 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/24 19:57:54 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ class PmergeMe
 
 		void					printInfo(int *stack, int lengthSort, std::vector<int> vecSort);
 
-		std::vector<int>		sortVector(std::vector<int> vecSort, int *stack, int pointer, int length);
+		std::vector<int>		sortVector(std::vector<int> vecSort, int start, int end);
 		std::list<int>			sortList(std::list<int> listSort, int *stack, int pointer, int length);
 
+		std::vector<int> 		insert_sort(std::vector<int> vecSort, int start, int end);
 
 	private:
 

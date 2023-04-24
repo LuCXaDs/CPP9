@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 20:12:32 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/20 22:12:53 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/24 15:36:03 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,16 +127,26 @@ int		BitcoinExchange::checkError(std::string verif, int i) {
 	}
 	if (verif.length() < 13)
 		return (printError(3, FALSE));
-	if (verif[4] != '-' && verif[7] != '-')
+	if (verif[4] != '-' || verif[7] != '-')
 		return (printError(4, FALSE));
-	if (verif[10] != ' ' && verif[11] != '|' && verif[12] != ' ')
+	if (verif[10] != ' ' || verif[11] != '|' || verif[12] != ' ')
 		return (printError(4, FALSE));
+		
+	char* pValDay;
+	char* pValMonth;
+	
 	year = verif.substr(0, 4);
 	month = verif.substr(5, 2);
 	day = verif.substr(8, 2);
-	if (!atoi(year.c_str()) || !atoi(month.c_str()) || !atoi(day.c_str()))
+	
+	double valDay = strtod(day.c_str(), &pValDay);
+	double valMonth = strtod(month.c_str(), &pValMonth);
+	
+	(void) valDay;
+	(void) valMonth;
+	if (!atoi(year.c_str()) || !atoi(month.c_str()) || !atoi(day.c_str()) || *pValDay || *pValDay)
 		return (printError(5, FALSE));
-	if (atoi(year.c_str()) < 0 && atoi(month.c_str()) < 0 && atoi(day.c_str()) < 0)
+	if (atoi(year.c_str()) < 0 || atoi(month.c_str()) < 1 || atoi(day.c_str()) < 1)
 		return (printError(5, FALSE));
 	if (atoi(month.c_str()) > 12 || atoi(month.c_str()) == 0)
 		return (printError(6, FALSE));
@@ -154,10 +164,16 @@ int		BitcoinExchange::checkError(std::string verif, int i) {
 		else
 			return (printError(11, FALSE));
 	}
+	
 	int pos = verif.find(" | ");
 	char* pEnd;
+	
 	value = verif.substr(pos + 3);
+	if (!value[0])
+		return (printError(13, FALSE));
+		
 	double val = strtod(value.c_str(), &pEnd);
+	
 	if (val > INT_MAX  || val < 0 || *pEnd)
 		return (printError(8, FALSE));
 	if (val > 1000)
@@ -209,14 +225,22 @@ int		BitcoinExchange::checkErrorData(std::string verif, int i) {
 	}
 	if (verif.length() < 11)
 		throw(Expt());
-	if (verif[4] != '-' && verif[7] != '-')
-		return (printError(4, FALSE));
+	if (verif[4] != '-' || verif[7] != '-')
+		throw(Expt());
 	if (verif[10] != ',')
 		throw(Expt());
+
+	char* pValDay;
+	char* pValMonth;
 	year = verif.substr(0, 4);
 	month = verif.substr(5, 2);
 	day = verif.substr(8, 2);
-	if (!atoi(year.c_str()) && !atoi(month.c_str()) && !atoi(day.c_str()))
+	double valDay = strtod(day.c_str(), &pValDay);
+	double valMonth = strtod(month.c_str(), &pValMonth);
+	
+	(void) valDay;
+	(void) valMonth;
+	if (!atoi(year.c_str()) || !atoi(month.c_str()) || !atoi(day.c_str()) || *pValDay || *pValDay)
 		throw(Expt());
 	if (atoi(year.c_str()) < 2009 || atoi(month.c_str()) < 1 || atoi(day.c_str()) < 1)
 		throw(Expt());
@@ -238,14 +262,17 @@ int		BitcoinExchange::checkErrorData(std::string verif, int i) {
 		else
 			throw(Expt());
 	}
+	
 	int pos = verif.find(",");
-	char* pEnd;
 	value = verif.substr(pos + 1);
+	if (!value[0])
+		throw(Expt());
+
+	char* pEnd;
 	double val = strtod(value.c_str(), &pEnd);
+
 	if (val > INT_MAX  || val < 0 || *pEnd)
 		throw(Expt());
-	if (val > 1000)
-		return (printError(12, FALSE));
 	return (1);
 }
 
@@ -275,6 +302,8 @@ int		BitcoinExchange::printError(int error, int print) {
 		std::cerr << YELLOW"Error: " << WHITE << RED"This is not leap year" << WHITE << std::endl;
 	if (error == 12)
 		std::cerr << YELLOW"Error: " << WHITE << RED"Value are superior than 1000" << WHITE << std::endl;
+	if (error == 13)
+		std::cerr << YELLOW"Error: " << WHITE << RED"Value not found" << WHITE << std::endl;
 	return (error);
 }
 

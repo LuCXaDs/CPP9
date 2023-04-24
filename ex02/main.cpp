@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:52:11 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/22 16:51:58 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/24 14:36:05 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int main(int ac, char **av) {
 			PmergeMe pmerge;
 
 			pmerge.mergeSort(av);
-
+			
 		}
 		catch(const std::exception& e)
 		{

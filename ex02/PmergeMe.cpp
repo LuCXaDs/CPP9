@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 17:47:20 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/22 17:47:54 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/24 20:23:00 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,24 +28,28 @@ void		PmergeMe::mergeSort(char **sort) {
 	int stack[lengthSort];
 
 	for (int i = 0; i < lengthSort; i++)
+	{
 		stack[i] = atoi(sort[i + 1]);
+		vecSort[i] = atoi(sort[i + 1]);
+	}
 	
-	int pointer = 0;
+	// int pointer = 0;
 	vectorTime = time_now();
-	while (pointer < lengthSort)
-	{
-		vecSort = sortVector(vecSort, stack, pointer, lengthSort);
-		pointer += 6;
-	}
+	vecSort = sortVector(vecSort, 0, lengthSort);
+	// while (pointer < lengthSort)
+	// {
+	// 	vecSort = sortVector(vecSort, stack, pointer, lengthSort);
+	// 	pointer += 6;
+	// }
 	vectorTime = time_now() - vectorTime;
-	pointer = 0;
-	listTime = time_now();
-	while (pointer < lengthSort)
-	{
-		listSort = sortList(listSort, stack, pointer, lengthSort);
-		pointer += 6;
-	}
-	listTime = time_now() - listTime - vectorTime;
+	// pointer = 0;
+	// listTime = time_now();
+	// while (pointer < lengthSort)
+	// {
+	// 	listSort = sortList(listSort, stack, pointer, lengthSort);
+	// 	pointer += 6;
+	// }
+	// listTime = time_now() - listTime - vectorTime;
 	printInfo(stack, lengthSort, vecSort);
 }
 
@@ -92,93 +96,66 @@ void			PmergeMe::easyFindError(char **tab) {
 	}
 }
 
-std::vector<int>		PmergeMe::sortVector(std::vector<int> vecSort, int *stack, int pointer, int length) {
+std::vector<int> 		PmergeMe::insert_sort(std::vector<int> vecSort, int start, int end) {
 
-	int i = 0;
-	std::vector<int> stackRight;
-	std::vector<int> stackLeft;
+	std::vector<int>::iterator it = vecSort.begin()+start;
+	std::vector<int>::iterator it1 = vecSort.begin()+start+1;
 
-	int begin_pointer = pointer;
-	int diff = length - pointer;
-
-	while (i < begin_pointer + 6)
+	std::vector<int>::iterator itTmp;
+	std::vector<int>::iterator it1Tmp;
+	
+	int Sstart = start;
+	while (Sstart < end)
 	{
-		if (pointer < length)
+		if (it1 != vecSort.end() && *it > *it1)
 		{
-			if (i < 3 && begin_pointer == 0 && diff >= 3)
-				stackLeft.push_back(stack[pointer++]);
-			else
-				stackRight.push_back(stack[pointer++]);
+			itTmp = vecSort.begin()+start;
+			it1Tmp = vecSort.begin()+start+1;
+			int i = 0;
+			while (*itTmp < *it1Tmp)
+			{
+				itTmp++, it1Tmp++;
+				i++;
+			}
+			vecSort.erase(vecSort.begin()+Sstart);
+			vecSort.insert(vecSort.begin()+start+i, static_cast<int>(*it));
 		}
-		else if (i < begin_pointer + diff)
-			stackLeft.push_back(vecSort[i - diff]);
-		i++;
-	}
-
-	std::vector<int>::iterator itStackLeft = stackLeft.begin();
-	std::vector<int>::iterator iteStackLeft = stackLeft.end();
-
-	std::vector<int>::iterator itStackRight = stackRight.begin();
-	std::vector<int>::iterator iteStackRight = stackRight.end();
-
-	std::sort(itStackLeft, iteStackLeft);
-	std::sort(itStackRight, iteStackRight);
-	std::merge (itStackLeft, iteStackLeft, itStackRight, iteStackRight, vecSort.begin());
-
-	for (int len = 0; len < begin_pointer + 3; len++)
-	{
-		if (stackLeft.size() > 0)
-			stackLeft.pop_back();
-		if (stackRight.size() > 0)
-			stackRight.pop_back();
+		it++, it1++;
+		Sstart++;
 	}
 	return (vecSort);
 }
 
-std::list<int>		PmergeMe::sortList(std::list<int> listSort, int *stack, int pointer, int length) {
 
-	int i = 0;
-	std::list<int> stackRight;
-	std::list<int> stackLeft;
+std::vector<int>		PmergeMe::sortVector(std::vector<int> vecSort, int start, int end) {
 
-	int begin_pointer = pointer;
-	int diff = length - pointer;
+	std::vector<int> stackRight;
+	std::vector<int> stackLeft;
 
-	std::list<int>::iterator itListSort = listSort.begin();
+	int size = end - start;
+	int middle = size / 2;
 
-	for (int len = 0; len < begin_pointer + 3; len++)
+	if (size > 2)
 	{
-		if (stackLeft.size() > 0)
-			stackLeft.pop_back();
-		if (stackRight.size() > 0)
-			stackRight.pop_back();
+		stackLeft = sortVector(vecSort, start, middle);
+		stackRight = sortVector(vecSort, middle, end);
+
+		std::vector<int>::iterator itStackLeft = stackLeft.begin();
+		std::vector<int>::iterator iteStackLeft = stackLeft.end();
+
+		std::vector<int>::iterator itStackRight = stackRight.begin();
+		std::vector<int>::iterator iteStackRight = stackRight.end();
+		
+		std::merge (itStackLeft, iteStackLeft, itStackRight, iteStackRight, vecSort.begin());
 	}
-
-	while (i < begin_pointer + 6)
-	{
-		if (pointer < length)
-		{
-			if (i < 3 && begin_pointer == 0 && diff >= 3)
-				stackLeft.push_back(stack[pointer++]);
-			else
-				stackRight.push_back(stack[pointer++]);
-		}
-		else if (i < begin_pointer + diff)
-		{
-			int tmp = *itListSort;
-			stackLeft.push_back(tmp);
-			itListSort++;
-		}
-		i++;
-	}
-
-	stackRight.sort();
-	stackLeft.sort();
-
-	stackRight.merge(stackLeft);
-
-	return (stackRight);
+	else
+		return (insert_sort(vecSort,start, end));
+	return (vecSort);
 }
+
+// std::list<int>		PmergeMe::sortList(std::list<int> listSort, int *stack, int pointer, int length) {
+
+// }
 
 int			PmergeMe::lengthDoubleTab(char **tab) {
 
