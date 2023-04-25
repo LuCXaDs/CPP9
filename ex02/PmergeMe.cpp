@@ -6,7 +6,7 @@
 /*   By: luserbu <luserbu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 17:47:20 by luserbu           #+#    #+#             */
-/*   Updated: 2023/04/24 20:23:00 by luserbu          ###   ########.fr       */
+/*   Updated: 2023/04/25 21:33:59 by luserbu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,37 +23,32 @@ void		PmergeMe::mergeSort(char **sort) {
 	easyFindError(sort);
 
 	int lengthSort = lengthDoubleTab(sort);
-	std::vector<int> vecSort(lengthSort);
-	std::list<int> listSort(lengthSort);
+	
 	int stack[lengthSort];
 
 	for (int i = 0; i < lengthSort; i++)
-	{
 		stack[i] = atoi(sort[i + 1]);
-		vecSort[i] = atoi(sort[i + 1]);
-	}
+
+	std::deque<int> dequeSort(stack, stack+lengthSort);
+	std::vector<int> vecSort(stack, stack+lengthSort);
+
+	parsingTime = time_now();
 	
-	// int pointer = 0;
 	vectorTime = time_now();
 	vecSort = sortVector(vecSort, 0, lengthSort);
-	// while (pointer < lengthSort)
-	// {
-	// 	vecSort = sortVector(vecSort, stack, pointer, lengthSort);
-	// 	pointer += 6;
-	// }
 	vectorTime = time_now() - vectorTime;
-	// pointer = 0;
-	// listTime = time_now();
-	// while (pointer < lengthSort)
-	// {
-	// 	listSort = sortList(listSort, stack, pointer, lengthSort);
-	// 	pointer += 6;
-	// }
-	// listTime = time_now() - listTime - vectorTime;
-	printInfo(stack, lengthSort, vecSort);
+	
+
+	generalTime = start_time();
+
+	dequeTime = time_now() - parsingTime;
+	dequeSort = sortDeque(dequeSort, 0, lengthSort);
+	dequeTime = time_now() - dequeTime - parsingTime;
+	
+	printInfo(stack, lengthSort, dequeSort);
 }
 
-void			PmergeMe::printInfo(int *stack, int lengthSort, std::vector<int> vecSort) {
+void			PmergeMe::printInfo(int *stack, int lengthSort, std::deque<int> vecSort) {
 
     std::cout << "Before:\t";
 	for (int i = 0; i < lengthSort; i++)
@@ -63,13 +58,12 @@ void			PmergeMe::printInfo(int *stack, int lengthSort, std::vector<int> vecSort)
     std::cout << std::endl;
 
 	std::cout << "After:\t";
-	for (std::vector<int>::iterator it=vecSort.begin(); it!=vecSort.end(); ++it)
+	for (std::deque<int>::iterator it=vecSort.begin(); it!=vecSort.end(); ++it)
     	std::cout << *it << " ";
     std::cout << std::endl;
 
-    std::cout << "Time to process a range of " << lengthSort << " elements with std::[..] : " << vectorTime << "μs" << std::endl;
-    std::cout << "Time to process a range of " << lengthSort << " elements with std::[..] : " << listTime << "μs" << std::endl;
-
+    std::cout << "Time to process a range of " << lengthSort << " elements with std::vector : " << vectorTime << "μs" << std::endl;
+    std::cout << "Time to process a range of " << lengthSort << " elements with std::deque : " << dequeTime << "μs" << std::endl;
 }
 
 
@@ -96,36 +90,63 @@ void			PmergeMe::easyFindError(char **tab) {
 	}
 }
 
-std::vector<int> 		PmergeMe::insert_sort(std::vector<int> vecSort, int start, int end) {
+int 	PmergeMe::findVecIterator(std::vector<int> stack, int nb, int start) {
 
+	int i = start;
+	std::vector<int>::iterator it = stack.begin()+start;
+	
+	while (it != stack.end())
+	{
+		if (*it == nb)
+			return (i);
+		it++;
+		i++;
+	}
+	return (i);
+}
+
+std::vector<int> 		PmergeMe::insertVecSort(std::vector<int> vecSort, int start, int end) {
+
+	std::vector<int> finalSort;
+	
 	std::vector<int>::iterator it = vecSort.begin()+start;
-	std::vector<int>::iterator it1 = vecSort.begin()+start+1;
 
+	for (int i = start; i < end; i++)
+	{
+		finalSort.push_back(*it);
+		it++;
+	}
+
+	it = finalSort.begin();
+	std::vector<int>::iterator it1 = finalSort.begin()+1;
+	
 	std::vector<int>::iterator itTmp;
 	std::vector<int>::iterator it1Tmp;
 	
-	int Sstart = start;
-	while (Sstart < end)
+	int nb = 0;
+	int tmp_start = start;
+	while (tmp_start < end)
 	{
-		if (it1 != vecSort.end() && *it > *it1)
+		if (it1 != finalSort.end() && *it > *it1)
 		{
-			itTmp = vecSort.begin()+start;
-			it1Tmp = vecSort.begin()+start+1;
+			itTmp = finalSort.begin();
+			it1Tmp = it1;
 			int i = 0;
 			while (*itTmp < *it1Tmp)
 			{
-				itTmp++, it1Tmp++;
+				itTmp++;
 				i++;
 			}
-			vecSort.erase(vecSort.begin()+Sstart);
-			vecSort.insert(vecSort.begin()+start+i, static_cast<int>(*it));
+			int tmp = *it1;
+			finalSort.erase(finalSort.begin()+findVecIterator(finalSort, tmp, nb));
+			finalSort.insert(finalSort.begin()+i, tmp);
 		}
 		it++, it1++;
-		Sstart++;
+		nb++;
+		tmp_start++;
 	}
-	return (vecSort);
+	return (finalSort);
 }
-
 
 std::vector<int>		PmergeMe::sortVector(std::vector<int> vecSort, int start, int end) {
 
@@ -133,9 +154,9 @@ std::vector<int>		PmergeMe::sortVector(std::vector<int> vecSort, int start, int 
 	std::vector<int> stackLeft;
 
 	int size = end - start;
-	int middle = size / 2;
+	int middle = start + size / 2;
 
-	if (size > 2)
+	if (size > 50)
 	{
 		stackLeft = sortVector(vecSort, start, middle);
 		stackRight = sortVector(vecSort, middle, end);
@@ -146,16 +167,113 @@ std::vector<int>		PmergeMe::sortVector(std::vector<int> vecSort, int start, int 
 		std::vector<int>::iterator itStackRight = stackRight.begin();
 		std::vector<int>::iterator iteStackRight = stackRight.end();
 		
-		std::merge (itStackLeft, iteStackLeft, itStackRight, iteStackRight, vecSort.begin());
+		std::vector<int> temp(stackRight.size() + stackLeft.size());
+		
+		std::merge (itStackLeft, iteStackLeft, itStackRight, iteStackRight, temp.begin());
+
+		return (temp);
 	}
 	else
-		return (insert_sort(vecSort,start, end));
-	return (vecSort);
+		return (insertVecSort(vecSort, start, end));
 }
 
-// std::list<int>		PmergeMe::sortList(std::list<int> listSort, int *stack, int pointer, int length) {
+int 	PmergeMe::findDeqIterator(std::deque<int> stack, int nb, int start) {
 
-// }
+	int i = start;
+	std::deque<int>::iterator it = stack.begin()+start;
+	
+	while (it != stack.end())
+	{
+		if (*it == nb)
+			return (i);
+		it++;
+		i++;
+	}
+	return (i);
+}
+
+int 					PmergeMe::checkSort(std::deque<int> finalSort, int length) {
+
+	int i = 0;
+	
+	while (i < length - 1)
+	{
+		if (finalSort[i] < finalSort[i + 1])
+			i++;
+		else
+			return (-1);
+	}
+	return (1);
+}
+
+std::deque<int> 		PmergeMe::insertDeqSort(std::deque<int> deqSort, int start, int end) {
+
+	std::deque<int> finalSort(end - start);
+	
+	std::deque<int>::iterator it = deqSort.begin()+start;
+
+	int j = 0;
+	for (int i = start; i < end; i++)
+	{
+		finalSort[j] = *it;
+		it++;
+		j++;
+	}
+
+	it = finalSort.begin();
+	std::deque<int>::iterator it1 = finalSort.begin()+1;
+	
+	std::deque<int>::iterator itTmp;
+	
+	while (it1 != finalSort.end())
+	{
+		if (it1 != finalSort.end() && *it > *it1)
+		{
+			itTmp = finalSort.begin();
+			int i = 0;
+			while (*itTmp < *it1 && itTmp != finalSort.end())
+			{
+				itTmp++;
+				i++;
+			}
+			int tmp = *it1;
+			finalSort.erase(it1);
+			finalSort.insert(finalSort.begin()+i, tmp);
+		}
+		else
+			it++, it1++;
+	}
+	return (finalSort);
+}
+
+std::deque<int>		PmergeMe::sortDeque(std::deque<int> deqSort, int start, int end) {
+
+	std::deque<int> stackRight;
+	std::deque<int> stackLeft;
+
+	int size = end - start;
+	int middle = start + size / 2;
+
+	if (size > 50)
+	{
+		stackLeft = sortDeque(deqSort, start, middle);
+		stackRight = sortDeque(deqSort, middle, end);
+
+		std::deque<int>::iterator itStackLeft = stackLeft.begin();
+		std::deque<int>::iterator iteStackLeft = stackLeft.end();
+
+		std::deque<int>::iterator itStackRight = stackRight.begin();
+		std::deque<int>::iterator iteStackRight = stackRight.end();
+		
+		std::deque<int> temp(stackRight.size() + stackLeft.size());
+		
+		std::merge (itStackLeft, iteStackLeft, itStackRight, iteStackRight, temp.begin());
+
+		return (temp);
+	}
+	else
+		return (insertDeqSort(deqSort, start, end));
+}
 
 int			PmergeMe::lengthDoubleTab(char **tab) {
 
